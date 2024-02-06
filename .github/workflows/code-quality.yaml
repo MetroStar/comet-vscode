@@ -20,5 +20,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Jest tests with coverage
-        run: sudo apt-get install xvfb && npm run test
+      - name: Run tests
+        run: npm run test
+        env:
+          DISPLAY: ":99.0"
