@@ -21,4 +21,4 @@ jobs:
         run: npm ci
 
       - name: Run Jest tests with coverage
-        run: npm run test
+        run: sudo apt-get install xvfb && npm run test
