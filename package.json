@@ -12,10 +12,44 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "comet-vscode",
+          "title": "Comet Assistant",
+          "icon": "$(rocket)"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "comet-vscode-details",
+        "contents": "To get started creating a new Comet Project, click the button below. \n[Start New Project](command:comet-vscode.start)"
+      },
+      {
+        "view": "comet-vscode-details",
+        "contents": "To add Comet to an existing project, click the button below. \n[Add Comet to Project](command:comet-vscode.add)",
+        "when": "!comet-vscode.hasComet"
+      }
+    ],
+    "views": {
+      "comet-vscode": [
+        {
+          "id": "comet-vscode-details",
+          "name": "Project Details"
+        }
+      ]
+    },
     "commands": [
       {
-        "command": "comet-vscode.hellocomet",
-        "title": "Hello Comet!"
+        "command": "comet-vscode.start",
+        "title": "Start New Project",
+        "category": "Comet"
+      },
+      {
+        "command": "comet-vscode.add",
+        "title": "Add Comet to Project",
+        "category": "Comet"
       }
     ]
   },
