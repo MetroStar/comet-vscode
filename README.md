@@ -2,9 +2,10 @@
 
 This extension provides initial creation as well as management of Comet applications. Features include:
 
-- Creating new Comet Starter Apps
-- Creating new Comet APIs
+- Generate new Comet Starter App
+- Generate new Comet API
 - Bootstrap existing React App with Comet (Coming soon)
+- Generate new component (TBD)
 - Add/remove default packages from Starter Apps (TBD)
 - Patching of existing apps (TBD)
 
