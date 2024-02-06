@@ -78,6 +78,23 @@ export function activate(context: ExtensionContext) {
                     `git clone ${getRepoUrl(projectType)} ${folderNameInput}`
                   );
                   terminal.sendText(`cd ${folderNameInput}`);
+
+                  // Cleanup the new repository
+                  terminal.sendText(`rm LICENSE.md || true`);
+                  terminal.sendText(
+                    `rm .github/workflows/accessibility-testing.yaml || true`
+                  );
+                  terminal.sendText(
+                    `rm .github/workflows/build-and-deploy.yaml || true`
+                  );
+                  terminal.sendText(
+                    `rm .github/workflows/e2e-testing.yaml || true`
+                  );
+                  terminal.sendText(
+                    "git add . && git commit -m 'Misc cleanup'"
+                  );
+                  terminal.sendText("git remote remove origin");
+
                   window.showInformationMessage(
                     "Project created successfully!"
                   );
