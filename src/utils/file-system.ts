@@ -17,6 +17,22 @@ export const getPackageJson = async (rootPath: string) => {
   }
 };
 
+export const getViteConfig = async (rootPath: string) => {
+  const filePath = path.join(rootPath, `vite.config.ts`);
+  try {
+    const file = fs.readFileSync(filePath, "utf8");
+    if (file === "") {
+      return null;
+    } else {
+      const config = JSON.parse(file);
+      return config;
+    }
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
 export const getRootPath = (workspace: any) => {
   return workspace.workspaceFolders && workspace.workspaceFolders.length > 0
     ? workspace.workspaceFolders[0].uri.fsPath

@@ -9,20 +9,34 @@ import {
   createProjectDirectory,
   getPackageJson,
   getRootPath,
+  getViteConfig,
 } from "./utils/file-system";
-import { API_REPO_URL, UI_REPO_URL } from "./constants";
 import { getRepoUrl } from "./utils/git-helpers";
+import { runTerminalCommands } from "./utils/terminal-helpers";
 
 export function activate(context: ExtensionContext) {
   const channel = getOutputChannel();
   const terminal = window.createTerminal({ name: "Comet Assistant" });
   const rootPath = getRootPath(workspace);
   if (rootPath) {
-    // TODO: Use getPackageJson to get project details
+    // Verify if package.json exists
     getPackageJson(rootPath).then((config) => {
-      // If package.json exists, set the context to true
       if (config) {
-        commands.executeCommand("setContext", "comet-vscode.hasComet", true);
+        commands.executeCommand(
+          "setContext",
+          "comet-vscode.hasPackageJson",
+          true
+        );
+      }
+    });
+    // Verify if vite.config.ts exists
+    getViteConfig(rootPath).then((config) => {
+      if (config) {
+        commands.executeCommand(
+          "setContext",
+          "comet-vscode.hasViteConfig",
+          true
+        );
       }
     });
   }
@@ -73,27 +87,24 @@ export function activate(context: ExtensionContext) {
                   // Create the project directory and clone into the directory
                   createProjectDirectory(folderPath, folderNameInput, channel);
                   terminal.show();
-                  terminal.sendText(`cd ${folderPath}`);
-                  terminal.sendText(
-                    `git clone ${getRepoUrl(projectType)} ${folderNameInput}`
-                  );
-                  terminal.sendText(`cd ${folderNameInput}`);
 
-                  // Cleanup the new repository
-                  terminal.sendText(`rm LICENSE.md || true`);
-                  terminal.sendText(
-                    `rm .github/workflows/accessibility-testing.yaml || true`
-                  );
-                  terminal.sendText(
-                    `rm .github/workflows/build-and-deploy.yaml || true`
-                  );
-                  terminal.sendText(
-                    `rm .github/workflows/e2e-testing.yaml || true`
-                  );
-                  terminal.sendText(
-                    "git add . && git commit -m 'Misc cleanup'"
-                  );
-                  terminal.sendText("git remote remove origin");
+                  const setup: string[] = [
+                    `cd ${folderPath}`,
+                    `git clone ${getRepoUrl(projectType)} ${folderNameInput}`,
+                    `cd ${folderNameInput}`,
+                  ];
+                  runTerminalCommands(setup, terminal);
+
+                  const cleanup: string[] = [
+                    `rm LICENSE.md || true`,
+                    `rm .github/workflows/accessibility-testing.yaml || true`,
+                    `rm .github/workflows/build-and-deploy.yaml || true`,
+                    `rm .github/workflows/e2e-testing.yaml || true`,
+                    "git add .",
+                    "git commit -m 'Misc cleanup'",
+                    "git remote remove origin",
+                  ];
+                  runTerminalCommands(cleanup, terminal);
 
                   window.showInformationMessage(
                     "Project created successfully!"
@@ -106,7 +117,26 @@ export function activate(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand("comet-vscode.add", async () => {
-      window.showInformationMessage("This feature is not yet implemented.");
+      terminal.show();
+
+      // Install dev dependencies
+      const installDevDeps: string[] = ["npm i -D autoprefixer"];
+      runTerminalCommands(installDevDeps, terminal);
+
+      // Install dependencies
+      const installDeps: string[] = [
+        "npm i @metrostar/comet-uswds @metrostar/comet-extras @metrostar/comet-data-viz",
+        "npm i @uswds/uswds",
+        "npm i @tanstack/react-table",
+      ];
+      runTerminalCommands(installDeps, terminal);
+
+      // TODO: Add uswds alias to vite.config.ts
+      // TODO: Add css preprocessor to vite.config.ts
+      // TODO: Add base USWDS provider files
+      // TODO: Add import to styles.scss
+
+      window.showInformationMessage("Comet added successfully!");
     })
   );
 }

@@ -29,7 +29,7 @@
       {
         "view": "comet-vscode-details",
         "contents": "To add Comet to an existing project, click the button below. \n[Add Comet to Project](command:comet-vscode.add)",
-        "when": "!comet-vscode.hasComet"
+        "when": "comet-vscode.hasPackageJson && comet-vscode.hasViteConfig"
       }
     ],
     "views": {
